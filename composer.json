@@ -1,0 +1,15 @@
+{
+    "name": "dkanojiya/image-service",
+    "type": "project",
+    "description": "Image Modifier Service Application",
+    "require": {
+        "php": "^8.0",
+        "ext-gd": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "ImageService\\": "src/",
+            "ImageModifier\\": "src/ImageModifier/"
+        }
+    }
+}
