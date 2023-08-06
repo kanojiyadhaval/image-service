@@ -38,7 +38,7 @@ COPY images ./images
 COPY tests ./tests
 
 # Set proper permissions for the images folder and sub-folders
-RUN chmod -R 755 ./images && chmod -R 755 ./tests/test_images
+RUN chmod -R 777 /var/www/html/images/modified
 
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
