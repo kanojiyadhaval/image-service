@@ -19,7 +19,7 @@
 
 ## Introduction
 
-The Image Service is a powerful application that allows you to process and modify images on the fly. It provides a RESTful API to apply various image modifiers, such as cropping and resizing, to images hosted on your server.
+The Image Service is a powerful application that allows you to process and modify images on the fly. It provides a GET URL to apply various image modifiers, such as cropping and resizing, to images hosted on your server.
 
 This documentation will guide you through the installation, setup, and usage of the Image Service, along with examples to help you get started.
 
