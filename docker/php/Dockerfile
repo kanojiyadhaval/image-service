@@ -38,7 +38,12 @@ COPY images ./images
 COPY tests ./tests
 
 # Set proper permissions for the images folder and sub-folders
-RUN chmod -R 777 /var/www/html/images/modified
+RUN chmod -R 777 ./images
+
+# Set user and group permissions for PHP-FPM
+RUN usermod -u 1000 www-data
+RUN groupmod -g 1000 www-data
+USER www-data
 
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
