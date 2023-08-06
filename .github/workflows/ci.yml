@@ -21,4 +21,4 @@ jobs:
         run: docker build -t image-service-app -f docker/php/Dockerfile .
 
       - name: Run PHPUnit tests
-        run: docker run -v $PWD:/var/www/html image-service-app composer test
+        run: docker run --rm image-service-app composer test
