@@ -38,8 +38,9 @@ COPY images ./images
 COPY tests ./tests
 
 # Set proper permissions for the images folder and sub-folders
-RUN chmod -R 777 ./images
-
+RUN chmod -R 755 ./images
+# Set proper permissions for the tests folder and sub-folders
+RUN chmod -R 777 ./tests
 # Set user and group permissions for PHP-FPM
 RUN usermod -u 1000 www-data
 RUN groupmod -g 1000 www-data
