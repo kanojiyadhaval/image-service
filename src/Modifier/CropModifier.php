@@ -1,9 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace ImageModifier;
+namespace ImageService\Modifier;
 
-class CropModifier implements ImageModifierInterface
+use ImageService\Service\FileSystem\LocalFileSystem;
+use ImageService\Service\ErrorHandling\ImageNotFoundException;
+use ImageService\Service\ErrorHandling\InvalidParameterException;
+
+class CropModifier implements ImageProcessorInterface
 {
     private array $supportedFormats = [
         'jpeg' => 'imagecreatefromjpeg',
@@ -12,13 +16,25 @@ class CropModifier implements ImageModifierInterface
         'gif'  => 'imagecreatefromgif',
     ];
 
+    private LocalFileSystem $fileSystem;
+
+    public function __construct(LocalFileSystem $fileSystem)
+    {
+        $this->fileSystem = $fileSystem;
+    }
+
     public function supports(array $params): bool
     {
         return isset($params['crop']);
     }
 
-    public function modifyImage(string $imagePath, array $params): ?string
+    public function process(string $imagePath, array $params): ?string
     {
+        // Use the LocalFileSystem object to check if the image exists
+        if (!$this->fileSystem->fileExists($imagePath)) {
+            throw new ImageNotFoundException('Image not found.');
+        }
+
         $cropSize = explode('x', $params['crop']);
         if (count($cropSize) === 2) {
             list($width, $height) = $cropSize;
@@ -30,7 +46,7 @@ class CropModifier implements ImageModifierInterface
 
             // Check if the image format is supported
             if (!isset($this->supportedFormats[$originalExtension])) {
-                return null; // Unsupported image format
+                throw new ImageNotFoundException('Unsupported image format.');
             }
 
             // Create the image based on the original extension
@@ -66,6 +82,6 @@ class CropModifier implements ImageModifierInterface
             imagedestroy($image);
         }
 
-        return null;
+        throw new InvalidParameterException('Invalid crop dimensions.');
     }
 }

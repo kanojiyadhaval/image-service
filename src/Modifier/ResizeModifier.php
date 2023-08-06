@@ -1,9 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace ImageModifier;
+namespace ImageService\Modifier;
 
-class ResizeModifier implements ImageModifierInterface
+use ImageService\Service\FileSystem\LocalFileSystem;
+use ImageService\Service\ErrorHandling\ImageNotFoundException;
+use ImageService\Service\ErrorHandling\InvalidParameterException;
+
+class ResizeModifier implements ImageProcessorInterface
 {
     private array $supportedFormats = [
         'jpeg' => 'imagecreatefromjpeg',
@@ -12,13 +16,25 @@ class ResizeModifier implements ImageModifierInterface
         'gif'  => 'imagecreatefromgif',
     ];
 
+    private LocalFileSystem $fileSystem;
+
+    public function __construct(LocalFileSystem $fileSystem)
+    {
+        $this->fileSystem = $fileSystem;
+    }
+
     public function supports(array $params): bool
     {
         return isset($params['resize']);
     }
 
-    public function modifyImage(string $imagePath, array $params): ?string
+    public function process(string $imagePath, array $params): ?string
     {
+        // Use the LocalFileSystem object to check if the image exists
+        if (!$this->fileSystem->fileExists($imagePath)) {
+            throw new ImageNotFoundException('Image not found.');
+        }
+
         $resizeDimensions = explode('x', $params['resize']);
         if (count($resizeDimensions) === 2) {
             list($width, $height) = $resizeDimensions;
@@ -30,7 +46,7 @@ class ResizeModifier implements ImageModifierInterface
 
             // Check if the image format is supported
             if (!isset($this->supportedFormats[$originalExtension])) {
-                return null; // Unsupported image format
+                throw new ImageNotFoundException('Unsupported image format.');
             }
 
             // Create the image based on the original extension
@@ -64,6 +80,6 @@ class ResizeModifier implements ImageModifierInterface
             return basename($modifiedImage);
         }
 
-        return null;
+        throw new InvalidParameterException('Invalid resize dimensions.');
     }
 }
